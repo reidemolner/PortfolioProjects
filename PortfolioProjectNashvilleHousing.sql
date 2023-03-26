@@ -1,25 +1,13 @@
-/*
-
-Cleaning Data with SQL
-
-*/
-
 SELECT *
 FROM PortfolioProject2.dbo.NashvilleHousing
 
---------------------------------------------------------------------------------------------------------------------------
 
--- Standardize Date Format
-
-
-SELECT SaleDateConverted, CONVERT(Date,SaleDate)
+SELECT SaleDate, CONVERT(Date,SaleDate)
 FROM PortfolioProject2.dbo.NashvilleHousing
 
 
 Update NashvilleHousing
 SET SaleDate = Convert(Date,SaleDate)
-
--- If it doesn't Update 
 
 
 ALTER TABLE NashvilleHousing
@@ -30,17 +18,10 @@ UPDATE Nashvillehousing
 SET SaleDateConverted = CONVERT(Date,SaleDate)
 
 
- --------------------------------------------------------------------------------------------------------------------------
-
--- Populate Property Address data
-
-
 SELECT *
 FROM PortfolioProject2.dbo.NashvilleHousing
 --WHERE PropertyAddress is NULL
 order by ParcelId
-
-
 
 SELECT a.ParcelID, a.PropertyAddress, b.ParcelID, b.PropertyAddress, ISNULL(a.PropertyAddress, b.PropertyAddress)
 FROM PortfolioProject2.dbo.NashvilleHousing a
@@ -57,11 +38,6 @@ JOIN PortfolioProject2.dbo.NashvilleHousing b
 	ON a.ParcelID = b.ParcelID
 	AND a.[UniqueID] <> b.[UniqueID]
 WHERE a.PropertyAddress is null
-
-
---------------------------------------------------------------------------------------------------------------------------
-
--- Address into Individual Columns (Address, City, State)
 
 
 SELECT PropertyAddress
@@ -93,7 +69,6 @@ SET PropertySplitCity = SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddres
 
 SELECT *
 FROM PortfolioProject2.dbo.NashvilleHousing
-
 
 SELECT OwnerAddress
 FROM PortfolioProject2.dbo.NashvilleHousing
@@ -130,12 +105,6 @@ SELECT *
 FROM PortfolioProject2.dbo.NashvilleHousing
 
 
---------------------------------------------------------------------------------------------------------------------------
-
-
--- Change Y and N to Yes and No in "Sold as Vacant" field
-
-
 SELECT DISTINCT(SoldAsVacant), COUNT(SOLDASVACANT)
 FROM PortfolioProject2.dbo.NashvilleHousing
 GROUP BY SoldAsVacant
@@ -155,10 +124,6 @@ SET SoldAsVacant = CASE WHEN SoldAsVacant = 'Y' Then 'Yes'
 		When SoldAsVacant = 'N' Then 'No'
 		Else SoldAsVacant
 		END
-		
------------------------------------------------------------------------------------------------------------------------------------------------------------
-
--- Remove Duplicates
 
 WITH RowNumCTE AS(
 SELECT *,
@@ -184,15 +149,8 @@ order by PropertyAddress
 SELECT *
 FROM PortfolioProject2.dbo.NashvilleHousing
 
-
----------------------------------------------------------------------------------------------------------
-
--- Delete Unused Columns
-
-SELECT *
-FROM PortfolioProject2.dbo.NashvilleHousing
+ALTER TABLE PortfolioProject2.dbo.NashvilleHousing
+DROP COLUMN OwnerAddress, TaxDistrict, PropertyAddress
 
 ALTER TABLE PortfolioProject2.dbo.NashvilleHousing
-DROP COLUMN OwnerAddress, TaxDistrict, PropertyAddress, Saledate
-
-
+DROP COLUMN SaleDate
